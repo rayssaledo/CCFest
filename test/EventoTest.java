@@ -19,7 +19,7 @@ public class EventoTest {
 	
 	@Before
 	public void setUp(){
-		temas = new ArrayList<>();
+		temas = new ArrayList<Tema>();
 	}
 	
 	@Test
