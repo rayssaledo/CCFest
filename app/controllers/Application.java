@@ -24,6 +24,9 @@ public class Application extends Controller {
 
 	@Transactional
     public static Result index(){
+		if (session().get("user") == null) {
+			return redirect(routes.Login.show());
+		}
 		if (!criouEventosFake){
 			List<Evento> eventos = criarEventosFakes();
 			criarParticipacoesFake(eventos);
