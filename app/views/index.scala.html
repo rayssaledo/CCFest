@@ -1,14 +1,44 @@
-@(message: String)
+@main("CCFest") {
 
-@main("Home Page") {
+<a class="arrow-left" href="#" style="z-index:11"></a> <a class="arrow-right" href="#" style="z-index:11"></a>
+<div class="swiper-container">
+	<div class="swiper-wrapper">
+		<div class="swiper-slide" style="background-color: rgb(13, 42, 70);">
+			@apresentacao()
+		</div>
+		<div class="swiper-slide" style="background-color: rgb(13, 42, 70);">
+			@visualizacao()
+		</div>
+		<div class="swiper-slide" style="background-color: rgb(13, 42, 70);">
+			@criacao()
+		</div>
+	</div>
+	<div class="pagination"></div>
+</div>
 
-    <div class="col-sm-12">
-    	<legend>
-    	<a href="/logout" class="btn btn-danger pull-right"> LogOut</a>
-        <h3 class="text-center"> Bem Vindo(a)! @session.get("user") </h3>
-        </legend>
-        
-    </div>
+<script>
+	var mySwiper;
 
-	
+	$(document).on('ready', function() {
+
+		mySwiper = new Swiper('.swiper-container', {
+			pagination : '.pagination',
+			loop : false,
+			grabCursor : true,
+			paginationClickable : true
+		})
+		
+		$('.arrow-left').on('click', function(e) {
+			e.preventDefault()
+			mySwiper.swipePrev()
+		})
+		
+		$('.arrow-right').on('click', function(e) {
+			e.preventDefault()
+			mySwiper.swipeNext()
+		})
+		
+		$('.content-slide').css('height',$('body').height()+'px')
+	});
+</script>
 }
