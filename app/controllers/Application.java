@@ -15,7 +15,7 @@ import models.exceptions.PessoaInvalidaException;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.index;
+
 
 public class Application extends Controller {
 	
@@ -33,7 +33,7 @@ public class Application extends Controller {
 
 			criouEventosFake = true;
 		}
-        return ok(index.render());
+        return ok(views.html.index.render());
     }
 
 	public static GenericDAO getDao(){
