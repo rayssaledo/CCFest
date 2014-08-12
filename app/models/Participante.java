@@ -31,19 +31,35 @@ public class Participante {
 	@MaxLength(value = 70)
 	private String email;
 
+	private String pass;
+
 	@ManyToOne
 	private Evento evento;
 
 	public Participante() {
 	}
 
+	public Participante(String nome, String email, String pass,Evento evento)
+			throws PessoaInvalidaException {
+		this(nome,email,evento);
+		setPass(pass);
+	}
+	
 	public Participante(String nome, String email, Evento evento)
 			throws PessoaInvalidaException {
 		setNome(nome);
 		setEmail(email);
 		setEvento(evento);
 	}
+	
+	public String getPass() {
+		return pass;
+	}
 
+	public void setPass(String pass) {
+		this.pass = pass;
+	}
+	
 	public String getNome() {
 		return nome;
 	}

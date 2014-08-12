@@ -4,7 +4,7 @@ import static play.data.Form.form;
 
 import java.util.List;
 
-import models.Usuario;
+import models.Participante;
 import models.dao.GenericDAO;
 import models.dao.GenericDAOImpl;
 import play.data.Form;
@@ -16,7 +16,7 @@ import views.html.registro;
 public class Registro extends Controller {
 	
 	private static GenericDAO dao = new GenericDAOImpl();
-	static Form<Usuario> registroForm = form(Usuario.class).bindFromRequest();
+	static Form<Participante> registroForm = form(Participante.class).bindFromRequest();
 
 	@Transactional
     public static Result show() {
@@ -26,7 +26,7 @@ public class Registro extends Controller {
 	@Transactional
 	public static Result registrar() {
 		
-		Usuario u = registroForm.bindFromRequest().get();
+		Participante u = registroForm.bindFromRequest().get();
     	
 		if (registroForm.hasErrors()) {
 			flash("fail", "Email já está em uso");
@@ -43,7 +43,7 @@ public class Registro extends Controller {
     }
 	
 	private static boolean validate(String email) {
-		List<Usuario> u = dao.findByAttributeName("Usuario", "email", email);
+		List<Participante> u = dao.findByAttributeName("Participante", "email", email);
 		if (u == null || u.isEmpty()) {
 			return false;
 		} return true;
