@@ -21,6 +21,7 @@ public class Application extends Controller {
 	
 	private static boolean criouEventosFake = false;
 	private static GenericDAO dao = new GenericDAOImpl();
+	private static int DATA_SETE = 7;
 
 	@Transactional
     public static Result index(){
@@ -52,7 +53,7 @@ public class Application extends Controller {
 			temas.add(Tema.PROGRAMACAO);
 			
 			calendar = Calendar.getInstance();
-			calendar.add(Calendar.DAY_OF_WEEK, 7);
+			calendar.add(Calendar.DAY_OF_WEEK, DATA_SETE);
 			
 			evento = new Evento("Python na mente e coração", "Neste evento iremos debater e propor soluções para novas releases.", calendar.getTime(), temas);
 			eventos.add(evento);
