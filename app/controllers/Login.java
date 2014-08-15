@@ -16,7 +16,7 @@ import views.html.login;
 public class Login extends Controller {
 	
 	private static GenericDAO dao = new GenericDAOImpl();
-	static Form<Usuario> loginForm = form(Usuario.class).bindFromRequest();
+	private static Form<Usuario> loginForm = form(Usuario.class).bindFromRequest();
 
 	@Transactional
     public static Result show() {
