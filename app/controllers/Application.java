@@ -35,7 +35,11 @@ public class Application extends Controller {
 
 			criouEventosFake = true;
 		}
-		Usuario user = (Usuario) dao.findByAttributeName("Usuario", "email", session().get("user")).get(0);
+		Usuario user = new Usuario();
+		if (dao.findByAttributeName("Usuario", "email", session().get("user")).get(0) != null){
+				user = (Usuario) dao.findByAttributeName("Usuario",
+					"email", session().get("user")).get(0);
+		}
         return ok(views.html.index.render(user));
     }
 
