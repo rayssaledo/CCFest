@@ -1,4 +1,4 @@
-@(form: Form[Usuario])
+@(form: Form[Usuario], mensagemErro: String)
 
 <html>
     <head>
@@ -32,11 +32,11 @@
 
 
    <div class="col-sm-4 col-sm-offset-4">
-   @if(flash.contains("fail")) {
-   		<p class="bg-danger" style="">
-        	@flash.get("fail")
-		</p>
-   }
+	@if(mensagemErro != null && !mensagemErro.trim().equals("")) {
+		<div class="alert alert-danger">
+			<p>@(mensagemErro)</p>
+		</div>
+	}
    
    @helper.form(routes.Login.authenticate) {
 	   <h1 class="text-center">Login</h1>

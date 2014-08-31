@@ -11,49 +11,53 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.data.Form;
 import play.db.jpa.Transactional;
-import views.html.login;
 
 public class Login extends Controller {
-	
+
 	private static GenericDAO dao = new GenericDAOImpl();
-	private static Form<Usuario> loginForm = form(Usuario.class).bindFromRequest();
+	private static Form<Usuario> loginForm = form(Usuario.class)
+			.bindFromRequest();
 
 	@Transactional
-    public static Result show() {
+	public static Result show() {
 		if (session().get("user") != null) {
 			return redirect(routes.Application.index());
 		}
-        return ok(login.render(loginForm));
-    }
-	
+		return okLogin("");
+	}
+
 	@Transactional
 	public static Result logout() {
 		session().clear();
 		return show();
 	}
-    
+
 	@Transactional
 	public static Result authenticate() {
-		
-		Usuario u = loginForm.bindFromRequest().get();
-		
-		String email = u.getEmail();
-		String senha = u.getSenha();
 
-        if (loginForm.hasErrors() || !validate(email, senha)) {
-        	flash("fail", "Email ou Senha Inválidos");
-        	return badRequest(login.render(loginForm));
-        } else {
-        	Usuario user = (Usuario) dao.findByAttributeName(
-        			"Usuario", "email", u.getEmail()).get(0);
-            session().clear();
-            session("user", user.getEmail());
-            return redirect(
-                routes.Application.index()
-            );
-        }
-    }
-	
+		Form<Usuario> form = loginForm.bindFromRequest();
+
+		String nome = form.field("nome").value();
+		String email = form.field("email").value();
+		String senha = form.field("senha").value();
+
+
+		if (loginForm.hasErrors() || !validate(email, senha)) {
+			return okLogin("Email ou senha inválidos");
+		} else {
+			Usuario user = (Usuario) dao.findByAttributeName("Usuario",
+					"email", email).get(0);
+			session().clear();
+			session("user", user.getEmail());
+			return redirect(routes.Application.index());
+		}
+	}
+
+	@Transactional
+	public static Result okLogin(String mensagem) {
+		return ok(views.html.login.render(loginForm, mensagem));
+	}
+
 	private static boolean validate(String email, String senha) {
 		List<Usuario> u = dao.findByAttributeName("Usuario", "email", email);
 		if (u == null || u.isEmpty()) {
