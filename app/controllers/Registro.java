@@ -11,42 +11,57 @@ import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
-import views.html.registro;
 
 public class Registro extends Controller {
-	
+
 	private static GenericDAO dao = new GenericDAOImpl();
-	private static Form<Usuario> registroForm = form(Usuario.class).bindFromRequest();
+	private static Form<Usuario> registroForm = form(Usuario.class)
+			.bindFromRequest();
 
 	@Transactional
-    public static Result show() {
-        return ok(registro.render(registroForm));
-    }
-    
-	@Transactional
-	public static Result registrar() {
-		
-		Usuario u = registroForm.bindFromRequest().get();
-    	
-		if (registroForm.hasErrors()) {
-			flash("fail", "Email já está em uso");
-            return badRequest(registro.render(registroForm));
-        } else if(validate(u.getEmail())){
-        	flash("fail", "Email já está em uso");
-            return badRequest(registro.render(registroForm));	
-        } else {
-        	dao.persist(u);
-        	dao.merge(u);
-        	dao.flush();
-            return redirect(routes.Login.show());
-        }
-    }
-	
-	private static boolean validate(String email) {
-		List<Usuario> u = dao.findByAttributeName("Usuario", "email", email);
-		if (u == null || u.isEmpty()) {
-			return false;
-		} return true;
+	public static Result show() {
+		return okRegistro("");
 	}
 
+	@Transactional
+	public static Result registrar() {
+
+		Form<Usuario> form = registroForm.bindFromRequest();
+
+		String nome = form.field("nome").value();
+		String email = form.field("email").value();
+		String senha = form.field("senha").value();
+
+		Usuario user = null;
+
+		try {
+			user = new Usuario(nome, email, senha);
+		} catch (Exception e) {
+			return okRegistro(e.getMessage());
+		}
+
+		if (validate(email)) {
+			return okRegistro("Email já está em uso");
+		}
+
+		Application.salvaObjeto(user);
+		return redirect(routes.Login.show());
+
+	}
+
+	@Transactional
+	public static Result okRegistro(String mensagem) {
+		return ok(views.html.registro.render(registroForm, mensagem));
+	}
+
+	private static boolean validate(String email) {
+		List<Usuario> u = dao.findByAttributeName("Usuario", "email", email);
+
+		for (Usuario usuario : u) {
+			if (usuario.getEmail().equals(email)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

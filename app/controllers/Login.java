@@ -38,7 +38,7 @@ public class Login extends Controller {
 		Usuario u = loginForm.bindFromRequest().get();
 		
 		String email = u.getEmail();
-		String senha = u.getPass();
+		String senha = u.getSenha();
 
         if (loginForm.hasErrors() || !validate(email, senha)) {
         	flash("fail", "Email ou Senha Inválidos");
@@ -59,7 +59,7 @@ public class Login extends Controller {
 		if (u == null || u.isEmpty()) {
 			return false;
 		}
-		if (!u.get(0).getPass().equals(senha)) {
+		if (!u.get(0).getSenha().equals(senha)) {
 			return false;
 		}
 		return true;
