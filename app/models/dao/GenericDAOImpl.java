@@ -32,6 +32,7 @@ public class GenericDAOImpl implements GenericDAO {
 		return JPA.em().find(clazz, id);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> List<T> findAllByClassName(String className) {
 		String hql = "FROM " + className;
@@ -49,6 +50,7 @@ public class GenericDAOImpl implements GenericDAO {
 		JPA.em().remove(objeto);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> List<T> findByAttributeName(String className,
 			String attributeName, String attributeValue) {
