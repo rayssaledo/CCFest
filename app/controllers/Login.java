@@ -41,7 +41,7 @@ public class Login extends Controller {
 		String senha = form.field("senha").value();
 
 
-		if (loginForm.hasErrors() || !validate(email, senha)) {
+		if (isDadosInvalidos(email, senha)) {
 			return okLogin("Email ou senha inválidos");
 		} else {
 			Usuario user = (Usuario) dao.findByAttributeName("Usuario",
@@ -50,6 +50,10 @@ public class Login extends Controller {
 			session("user", user.getEmail());
 			return redirect(routes.Application.index());
 		}
+	}
+
+	private static boolean isDadosInvalidos(String email, String senha) {
+		return loginForm.hasErrors() || !validate(email, senha);
 	}
 
 	@Transactional
