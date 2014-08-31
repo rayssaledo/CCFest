@@ -8,8 +8,8 @@ import java.util.List;
 
 import models.Evento;
 import models.EventoComparator;
-import models.Participante;
 import models.Tema;
+import models.Usuario;
 import models.exceptions.EventoInvalidoException;
 import models.exceptions.PessoaInvalidaException;
 import play.data.Form;
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class EventoController extends Controller {
 
 	private final static Form<Evento> EVENTO_FORM = form(Evento.class);
-	private final static Form<Participante> participanteForm = form(Participante.class);
+	private final static Form<Usuario> participanteForm = form(Usuario.class);
 
 	@Transactional
 	public static Result eventosPorTema(int id) throws PessoaInvalidaException, EventoInvalidoException{
@@ -59,27 +59,23 @@ public class EventoController extends Controller {
 			return badRequest();
 		} else {
 			Evento novoEvento = eventoFormRequest.get();
-			Application.getDao().persist(novoEvento);
-			Application.getDao().merge(novoEvento);
-			Application.getDao().flush();
+			Application.salvaObjeto(novoEvento);
 			return redirect(controllers.routes.Application.index());
 		}
 	}
 	
 	@Transactional
-	public static Result participar(long id) throws PessoaInvalidaException, EventoInvalidoException{
-		Form<Participante> participanteFormRequest = participanteForm.bindFromRequest();
+	public static Result participar(long id) throws Exception{
+		Form<Usuario> participanteFormRequest = participanteForm.bindFromRequest();
 		
 		if (participanteForm.hasErrors()) {
 			return badRequest();
 		} else {
 			Evento evento = Application.getDao().findByEntityId(Evento.class, id);
-			Participante novoParticipante = participanteFormRequest.get();
-			novoParticipante.setEvento(evento);
+			Usuario novoParticipante = participanteFormRequest.get();
+			evento.adicionaParticipante(novoParticipante);
+			Application.salvaObjeto(evento);
 			
-			Application.getDao().persist(novoParticipante);
-			Application.getDao().merge(novoParticipante);
-			Application.getDao().flush();
 			return redirect(controllers.routes.Application.index());
 		}
 	}

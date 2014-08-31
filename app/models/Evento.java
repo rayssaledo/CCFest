@@ -40,8 +40,8 @@ public class Evento {
 	@Required
 	private Date data;
 
-	@OneToMany(mappedBy = "evento")
-	private List<Participante> participantes = new ArrayList<Participante>();
+	@OneToMany
+	private List<Usuario> participantes;
 
 	@ElementCollection
 	@Enumerated(value = EnumType.ORDINAL)
@@ -49,14 +49,26 @@ public class Evento {
 	private List<Tema> temas = new ArrayList<Tema>();
 
 	public Evento() {
+		participantes = new ArrayList<Usuario>();
 	}
 
 	public Evento(String titulo, String descricao, Date data, List<Tema> temas)
-			throws EventoInvalidoException {
-		this.titulo = titulo;
-		this.descricao = descricao;
-		this.data = data;
-		this.temas = temas;
+			throws Exception {
+		this();
+		isSetTitulo(titulo);
+		isSetDescricao(descricao);
+		isSetData(data);
+		isSetTemas(temas);
+	}
+
+	public void adicionaParticipante(Usuario usuario) throws Exception {
+		if (usuario == null) {
+			throw new Exception("nao pode adicionar usuario nulo");
+		}
+		if (participantes.contains(usuario)){
+			throw new Exception("ja está participando do evento");
+		}
+		participantes.add(usuario);
 	}
 
 	public String getTitulo() {
@@ -83,43 +95,67 @@ public class Evento {
 		return temas;
 	}
 
-	public void setTitulo(String titulo) throws EventoInvalidoException {
+	public void setTitulo(String titulo) throws Exception {
+		isSetTitulo(titulo);
+	}
+
+	private void isSetTitulo(String titulo) throws Exception {
 		if (titulo == null) {
-			throw new EventoInvalidoException("Parametro nulo");
+			throw new Exception("titulo nao pode ser nulo");
+		}
+		if (titulo.trim().equals("")) {
+			throw new Exception("titulo nao pode ser vazio");
 		}
 		if (titulo.length() > 40) {
-			throw new EventoInvalidoException("Título longo");
+			throw new EventoInvalidoException(
+					"titulo nao pode ter mais de 40 caracteres");
 		}
 		this.titulo = titulo;
 	}
 
-	public void setDescricao(String descricao) throws EventoInvalidoException {
+	public void setDescricao(String descricao) throws Exception {
+		isSetDescricao(descricao);
+	}
+
+	private void isSetDescricao(String descricao) throws Exception {
 		if (descricao == null) {
-			throw new EventoInvalidoException("Parametro nulo");
+			throw new Exception("descricao nao pode ser nula");
+		}
+		if (descricao.trim().equals("")) {
+			throw new Exception("descricao nao pode ser vazia");
 		}
 		if (descricao.length() > 450) {
-			throw new EventoInvalidoException("Descrição longa");
+			throw new Exception("Descrição longa");
 		}
 		this.descricao = descricao;
 	}
 
-	public void setData(Date data) throws EventoInvalidoException {
-		if (data == null){
-			throw new EventoInvalidoException("Parametro nulo");
+	public void setData(Date data) throws Exception {
+		isSetData(data);
+	}
+
+	private void isSetData(Date data) throws Exception {
+		if (data == null) {
+			throw new Exception("data nao pode ser nula");
 		}
-		if (data.compareTo(new Date()) < 0){
-			throw new EventoInvalidoException("Data inválida");
+		if (data.compareTo(new Date()) < 0) {
+			throw new Exception("data inválida");
 		}
 		this.data = data;
 	}
 
-	public void setTemas(List<Tema> temas) throws EventoInvalidoException {
-		if (temas == null){
-			throw new EventoInvalidoException("Parametro nulo");
+	public void setTemas(List<Tema> temas) throws Exception {
+		isSetTemas(temas);
+	}
+
+	private void isSetTemas(List<Tema> temas) throws Exception {
+		if (temas == null) {
+			throw new Exception("lista de temas nao pode ser nula");
 		}
-		if (temas.size() == 0){
-			throw new EventoInvalidoException("Nenhum tema");
+		if (temas.size() == 0) {
+			throw new Exception("nao foi adicionado nenhum tema");
 		}
 		this.temas = temas;
 	}
+
 }
