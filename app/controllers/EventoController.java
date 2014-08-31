@@ -10,8 +10,6 @@ import models.Evento;
 import models.EventoComparator;
 import models.Tema;
 import models.Usuario;
-import models.exceptions.EventoInvalidoException;
-import models.exceptions.PessoaInvalidaException;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -25,34 +23,35 @@ public class EventoController extends Controller {
 	private final static Form<Usuario> participanteForm = form(Usuario.class);
 
 	@Transactional
-	public static Result eventosPorTema(int id) throws PessoaInvalidaException, EventoInvalidoException{
-	
-		List<Evento> todosEventos = Application.getDao().findAllByClassName("Evento");
-		
+	public static Result eventosPorTema(int id) throws Exception {
+
+		List<Evento> todosEventos = Application.getDao().findAllByClassName(
+				"Evento");
+
 		List<Evento> eventosRequeridos = new ArrayList<Evento>();
-		
+
 		for (Evento ev : todosEventos) {
-			if (ev.getTemas().contains(Tema.values()[(int) id])){
+			if (ev.getTemas().contains(Tema.values()[(int) id])) {
 				eventosRequeridos.add(ev);
 			}
 		}
 
 		Collections.sort(eventosRequeridos, new EventoComparator());
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		String json = "";
-		
+
 		try {
 			json = mapper.writeValueAsString(eventosRequeridos);
 		} catch (Exception e) {
 			return badRequest();
 		}
-		
+
 		return ok(json);
 	}
-	
+
 	@Transactional
-	public static Result novo() throws PessoaInvalidaException, EventoInvalidoException{
+	public static Result novo() throws Exception {
 		Form<Evento> eventoFormRequest = EVENTO_FORM.bindFromRequest();
 
 		if (EVENTO_FORM.hasErrors()) {
@@ -63,19 +62,21 @@ public class EventoController extends Controller {
 			return redirect(controllers.routes.Application.index());
 		}
 	}
-	
+
 	@Transactional
-	public static Result participar(long id) throws Exception{
-		Form<Usuario> participanteFormRequest = participanteForm.bindFromRequest();
-		
+	public static Result participar(long id) throws Exception {
+		Form<Usuario> participanteFormRequest = participanteForm
+				.bindFromRequest();
+
 		if (participanteForm.hasErrors()) {
 			return badRequest();
 		} else {
-			Evento evento = Application.getDao().findByEntityId(Evento.class, id);
+			Evento evento = Application.getDao().findByEntityId(Evento.class,
+					id);
 			Usuario novoParticipante = participanteFormRequest.get();
 			evento.adicionaParticipante(novoParticipante);
 			Application.salvaObjeto(evento);
-			
+
 			return redirect(controllers.routes.Application.index());
 		}
 	}
