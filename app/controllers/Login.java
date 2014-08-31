@@ -36,8 +36,7 @@ public class Login extends Controller {
 	public static Result authenticate() {
 
 		Form<Usuario> form = loginForm.bindFromRequest();
-
-		String nome = form.field("nome").value();
+		
 		String email = form.field("email").value();
 		String senha = form.field("senha").value();
 
